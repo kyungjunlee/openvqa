@@ -26,12 +26,15 @@ class DataSet(BaseDataSet):
             glob.glob(__C.FEATS_PATH[__C.DATASET]['test'] + '/*.npz')
 
         # Loading question word list
+        # For VizWiz, assume that annotation files are located under raw_path
+        # folders for train, val, and test sets, respectively.
         stat_ques_list = \
             json.load(open(__C.RAW_PATH[__C.DATASET]['train'], 'r')) + \
             json.load(open(__C.RAW_PATH[__C.DATASET]['val'], 'r')) + \
             json.load(open(__C.RAW_PATH[__C.DATASET]['test'], 'r'))
 
         # Loading answer word list
+        # Each of VizWiz annotation files include both questions and answers.
         stat_ans_list = \
             json.load(open(__C.RAW_PATH[__C.DATASET]['train'], 'r')) + \
             json.load(open(__C.RAW_PATH[__C.DATASET]['val'], 'r'))
@@ -60,9 +63,11 @@ class DataSet(BaseDataSet):
         # ------------------------
 
         # {image id} -> {image feature absolutely path}
+        # In VizWiz, image id = image filename (without extension)
         self.iid_to_frcn_feat_path = self.img_feat_path_load(frcn_feat_path_list)
 
         # {question id} -> {question}
+        # In VizWiz, question id = image id
         self.qid_to_ques = self.ques_load(self.ques_list)
 
         # Tokenize
@@ -72,6 +77,7 @@ class DataSet(BaseDataSet):
 
         # Answers statistic
         # self.ans_to_ix, self.ix_to_ans = self.ans_stat('openvqa/datasets/vqa/answer_dict.json')
+        # TODO: what value should we use for "ans_freq" in the function below?
         self.ans_to_ix, self.ix_to_ans = self.ans_stat(stat_ans_list, ans_freq=8)
         self.ans_size = self.ans_to_ix.__len__()
         print(' ========== Answer token vocab size (occur more than {} times):'.format(8), self.ans_size)
@@ -86,7 +92,7 @@ class DataSet(BaseDataSet):
             # filename without extension is iid in VizWiz
             iid = os.path.basename(path).split('.')[0]
             # iid = str(int(path.split('/')[-1].split('_')[-1].split('.')[0]))
-            print(iid)
+            # print(iid)
             iid_to_path[iid] = path
 
         return iid_to_path
@@ -99,7 +105,7 @@ class DataSet(BaseDataSet):
             # filename without extension is qid in VizWiz
             qid = each['image'].split('.')[0]
             ques = each['question']
-            print(qid, ques)
+            # print(qid, ques)
             qid_to_ques[qid] = ques
 
         return qid_to_ques
@@ -137,18 +143,22 @@ class DataSet(BaseDataSet):
 
         return token_to_ix, pretrained_emb
 
-
+    
     def ans_stat(self, stat_ans_list, ans_freq):
         ans_to_ix = {}
         ix_to_ans = {}
         ans_freq_dict = {}
     
         for ans in stat_ans_list:
-            ans_proc = prep_ans(ans['multiple_choice_answer'])
-            if ans_proc not in ans_freq_dict:
-                ans_freq_dict[ans_proc] = 1
-            else:
-                ans_freq_dict[ans_proc] += 1
+            # VizWiz does not have "multiple_choice_answer" annotation.
+            # TODO: what would be the right behavior for VizWiz then?
+            # ans_proc = prep_ans(ans['multiple_choice_answer'])
+            for each in ans['answers']:
+                ans_proc = prep_ans(each['answer'])
+                if ans_proc not in ans_freq_dict:
+                    ans_freq_dict[ans_proc] = 1
+                else:
+                    ans_freq_dict[ans_proc] += 1
     
         ans_freq_filter = ans_freq_dict.copy()
         for ans in ans_freq_dict:
@@ -175,6 +185,17 @@ class DataSet(BaseDataSet):
     def load_ques_ans(self, idx):
         if self.__C.RUN_MODE in ['train']:
             ans = self.ans_list[idx]
+            # ans is a dictionary following the structure below:
+            # {
+            #   "image": (str),
+            #   "question": (str),
+            #   "answers": [{
+            #       "answer": (str),
+            #       "answer_confidence": (str)
+            #   }, ...],
+            #   "answer_type": (str),
+            #   "answerable": (int)
+            # }
             iid = ans["image"].split(".")[0]
             # qid is iid in VizWiz
             ques = self.qid_to_ques[iid]
@@ -189,7 +210,18 @@ class DataSet(BaseDataSet):
 
         else:
             ques = self.ques_list[idx]
-            iid = str(ques['image_id'])
+            # ques is a dictionary following the structure below:
+            # {
+            #   "image": (str),
+            #   "question": (str),
+            #   "answers": [{
+            #       "answer": (str),
+            #       "answer_confidence": (str)
+            #   }, ...],
+            #   "answer_type": (str),
+            #   "answerable": (int)
+            # }
+            iid = ques["image"].split(".")[0]
 
             ques_ix_iter = self.proc_ques(ques, self.token_to_ix, max_token=14)
 
