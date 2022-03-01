@@ -1,4 +1,4 @@
-# OpenVQA
+# OpenVQA for VizWiz
 
 <div>
 	<a href="https://openvqa.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="https://readthedocs.org/projects/openvqa/badge/?version=latest"/></a>
@@ -7,6 +7,7 @@
 
 OpenVQA is a general platform for visual question ansering (VQA) research, with implementing state-of-the-art approaches (e.g., [BUTD](https://arxiv.org/abs/1707.07998), [MFH](https://arxiv.org/abs/1708.03619), [BAN](https://arxiv.org/abs/1805.07932), [MCAN](https://arxiv.org/abs/1906.10770) and [MMNasNet](https://arxiv.org/pdf/2004.12070.pdf)) on different benchmark datasets like [VQA-v2](https://visualqa.org/), [GQA](https://cs.stanford.edu/people/dorarad/gqa/index.html) and [CLEVR](https://cs.stanford.edu/people/jcjohns/clevr/). Supports for more methods and datasets will be updated continuously.
 
+NOTE: Kyungjun and Kyle are working on adding a support of the VizWiz dataset to OpenVQA.
 
 
 <p align="center">
@@ -18,19 +19,31 @@ OpenVQA is a general platform for visual question ansering (VQA) research, with 
 
 Getting started and learn more about OpenVQA [here](https://openvqa.readthedocs.io/en/latest/).
 
+
+## VizWiz Image Features
+
+The bottom-up-attention model is used to extract image features from the [VizWiz](https://vizwiz.org/tasks-and-datasets/vqa/) dataset (i.e., VizWiz VQA dataset available since January 1, 2020). Its feature extraction script can be found in the following link: [extract_feature_to_npz.py](https://github.com/kyungjunlee/bottom-up-attention/blob/master/tools/extract_feature_to_npz.py).
+
+
+Download each tar.gz file and untar it under `data/vizwiz/feats/`.
+- [train set](https://umd.box.com/s/4p1951b2ifi5puslln6kurp5fbu77el8)
+- [validation set](https://umd.box.com/s/ev7tirnc860vujq6rje57d8t8bksnem4)
+- [test set](https://umd.box.com/s/ev7tirnc860vujq6rje57d8t8bksnem4)
+
+
 ## Benchmark and Model Zoo
 
 Supported methods and benchmark datasets are shown in the below table.
 Results and models are available in [MODEL ZOO](https://openvqa.readthedocs.io/en/latest/basic/model_zoo.html).
 
-|                                           | [VQA-v2](https://visualqa.org/) | [GQA](https://cs.stanford.edu/people/dorarad/gqa/index.html) | [CLEVR](https://cs.stanford.edu/people/jcjohns/clevr/) |
-|:-----------------------------------------:|:-------------------------------:|:------------------------------------------------------------:|:------------------------------------------------------:|
-| [BUTD](https://arxiv.org/abs/1707.07998)  | ✓                               |      ✓                                                        |                                                        |
-| [MFB](https://arxiv.org/abs/1708.01471v1) | ✓                               |                                                              |                                                        |
-| [MFH](https://arxiv.org/abs/1708.03619)   | ✓                               |                                                              |                                                        |
-| [BAN](https://arxiv.org/abs/1805.07932)   | ✓                               |       ✓                                                       |                                                        |
-| [MCAN](https://arxiv.org/abs/1906.10770)  | ✓                               | ✓                                                            | ✓                                                      |
-| [MMNasNet](https://arxiv.org/pdf/2004.12070.pdf)  | ✓                               |                                                             |                                                       |
+|                                           | [VQA-v2](https://visualqa.org/) | [GQA](https://cs.stanford.edu/people/dorarad/gqa/index.html) | [CLEVR](https://cs.stanford.edu/people/jcjohns/clevr/) | [VizWiz](https://vizwiz.org/tasks-and-datasets/vqa/) |
+|:-----------------------------------------:|:-------------------------------:|:------------------------------------------------------------:|:------------------------------------------------------:| :------------------------------------------------------:|
+| [BUTD](https://arxiv.org/abs/1707.07998)  | ✓                               |      ✓                                                        |                                                        |                                                        |
+| [MFB](https://arxiv.org/abs/1708.01471v1) | ✓                               |                                                              |                                                        |                                                        |
+| [MFH](https://arxiv.org/abs/1708.03619)   | ✓                               |                                                              |                                                        |                                                        |
+| [BAN](https://arxiv.org/abs/1805.07932)   | ✓                               |       ✓                                                       |                                                        |                                                        |
+| [MCAN](https://arxiv.org/abs/1906.10770)  | ✓                               | ✓                                                            | ✓                                                      |                                                        |
+| [MMNasNet](https://arxiv.org/pdf/2004.12070.pdf)  | ✓                               |                                                             |                                                       |                                                        |
 
 ## News & Updates
 
