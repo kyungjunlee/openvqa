@@ -28,7 +28,7 @@ The bottom-up-attention model is used to extract image features from the [VizWiz
 Download each tar.gz file and untar it under `data/vizwiz/feats/`.
 - [train set](https://umd.box.com/s/4p1951b2ifi5puslln6kurp5fbu77el8)
 - [validation set](https://umd.box.com/s/ev7tirnc860vujq6rje57d8t8bksnem4)
-- [test set](https://umd.box.com/s/ev7tirnc860vujq6rje57d8t8bksnem4)
+- [test set](https://umd.box.com/s/hizgimuy293mf4517gmnvgzmcg30c5ae)
 
 
 ## Benchmark and Model Zoo
