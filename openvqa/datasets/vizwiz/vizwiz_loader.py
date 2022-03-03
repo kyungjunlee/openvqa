@@ -9,7 +9,7 @@ import glob, json, re, en_vectors_web_lg
 from openvqa.core.base_dataset import BaseDataSet
 from openvqa.utils.ans_punct import prep_ans
 
-# TODO: revise this code for VizWiz
+
 class DataSet(BaseDataSet):
     def __init__(self, __C):
         super(DataSet, self).__init__()
