@@ -22,6 +22,7 @@ class PATH:
             'vqa': self.DATA_ROOT + '/vqa',
             'gqa': self.DATA_ROOT + '/gqa',
             'clevr': self.DATA_ROOT + '/clevr',
+            'vizwiz': self.DATA_ROOT + '/vizwiz',
         }
 
 
@@ -40,6 +41,11 @@ class PATH:
                 'val': self.DATA_PATH['clevr'] + '/feats' + '/val',
                 'test': self.DATA_PATH['clevr'] + '/feats' + '/test',
             },
+            'vizwiz': {
+                'train': self.DATA_PATH['vizwiz'] + '/feats' + '/train',
+                'val': self.DATA_PATH['vizwiz'] + '/feats' + '/val',
+                'test': self.DATA_PATH['vizwiz'] + '/feats' + '/test',
+           },
         }
 
 
@@ -68,6 +74,11 @@ class PATH:
                 'val': self.DATA_PATH['clevr'] + '/raw' + '/questions/CLEVR_val_questions.json',
                 'test': self.DATA_PATH['clevr'] + '/raw' + '/questions/CLEVR_test_questions.json',
             },
+            'vizwiz': {
+                'train': self.DATA_PATH['vizwiz'] + '/raw' + '/train.json',
+                'val': self.DATA_PATH['vizwiz'] + '/raw' + '/val.json',
+                'test': self.DATA_PATH['vizwiz'] + '/raw' + '/test.json',
+            },
         }
 
 
@@ -83,6 +94,11 @@ class PATH:
                 'test': 'test',
             },
             'clevr': {
+                'train': '',
+                'val': 'val',
+                'test': 'test',
+            },
+            'vizwiz': {
                 'train': '',
                 'val': 'val',
                 'test': 'test',
