@@ -63,6 +63,9 @@ class BaseAdapter(nn.Module):
         elif self.__C.DATASET in ['clevr']:
             self.clevr_init(__C)
 
+        elif self.__C.DATASET in ['vizwiz']:
+            self.vizwiz_init(__C)
+
         else:
             exit(-1)
 
@@ -76,6 +79,9 @@ class BaseAdapter(nn.Module):
 
     def clevr_init(self, __C):
         raise NotImplementedError()
+    
+    def vizwiz_init(self, __C):
+        raise NotImplementedError()
 
     def forward(self, frcn_feat, grid_feat, bbox_feat):
         feat_dict = feat_filter(self.__C.DATASET, frcn_feat, grid_feat, bbox_feat)
@@ -88,6 +94,9 @@ class BaseAdapter(nn.Module):
 
         elif self.__C.DATASET in ['clevr']:
             return self.clevr_forward(feat_dict)
+        
+        elif self.__C.DATASET in ['vizwiz']:
+            return self.vizwiz_forward(feat_dict)
 
         else:
             exit(-1)
@@ -99,5 +108,8 @@ class BaseAdapter(nn.Module):
         raise NotImplementedError()
 
     def clevr_forward(self, feat_dict):
+        raise NotImplementedError()
+    
+    def vizwiz_forward(self, feat_dict):
         raise NotImplementedError()
 
