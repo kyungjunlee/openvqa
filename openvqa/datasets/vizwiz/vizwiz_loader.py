@@ -104,9 +104,11 @@ class DataSet(BaseDataSet):
         for each in ques_list:
             # filename without extension is qid in VizWiz
             qid = each['image'].split('.')[0]
-            ques = each['question']
+            # ques = each['question']
             # print(qid, ques)
-            qid_to_ques[qid] = ques
+            # assign 'each' here to each qid for compability. Some functions
+            # later try loading a question from each using a key 'question'.
+            qid_to_ques[qid] = each
 
         return qid_to_ques
 
