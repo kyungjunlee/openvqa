@@ -1,8 +1,8 @@
 """ VQA Evaluation for VizWiz
 """
 
-from openvqa.datasets.vqa.eval.vqa import VQA
-from openvqa.datasets.vqa.eval.vqaEval import VQAEval
+from openvqa.datasets.vizwiz.eval.vqa import VQA
+from openvqa.datasets.vizwiz.eval.vqaEval import VQAEval
 import json, pickle
 import numpy as np
 
@@ -74,5 +74,3 @@ def eval(__C, dataset, ans_ix_list, pred_list, result_eval_file, ensemble_file, 
             logfile.write("%s : %.02f " % (ansType, vqaEval.accuracy['perAnswerType'][ansType]))
         logfile.write("\n\n")
         logfile.close()
-
-

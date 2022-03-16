@@ -91,6 +91,10 @@ class BaseCfgs(PATH):
             'clevr': {
                 'GRID_FEAT_SIZE': (196, 1024),
             },
+            'vizwiz': {
+                'FRCN_FEAT_SIZE': (100, 2048),
+                'BBOX_FEAT_SIZE': (100, 5),
+            },
         }
 
         # Set if bbox_feat need be normalize by image size, default: False
@@ -288,6 +292,7 @@ class BaseCfgs(PATH):
             'vqa': ['bce', 'kld'],
             'gqa': ['ce'],
             'clevr': ['ce'],
+            'vizwiz': ['bce', 'kld'],
         }
 
         assert self.LOSS_FUNC in self.TASK_LOSS_CHECK[self.DATASET], \

@@ -29,7 +29,8 @@ def parse_args():
                            'mfh',
                            'mem',
                            'butd',
-                           'mmnasnet'
+                           'mmnasnet_small',
+                           'mmnasnet_large'
                            ]
                         ,
                       help='{'
@@ -40,17 +41,19 @@ def parse_args():
                            'mfb,'
                            'mfh,'
                            'butd,'
-                           'mmnasnet,'
+                           'mmnasnet_small,'
+                           'mmnasnet_large'
                            '}'
                         ,
                       type=str, required=True)
 
     parser.add_argument('--DATASET', dest='DATASET',
-                      choices=['vqa', 'gqa', 'clevr'],
+                      choices=['vqa', 'gqa', 'clevr', 'vizwiz'],
                       help='{'
                            'vqa,'
                            'gqa,'
                            'clevr,'
+                           'vizwiz,'
                            '}'
                         ,
                       type=str, required=True)
@@ -61,6 +64,7 @@ def parse_args():
                            "vqa: {'train', 'train+val', 'train+val+vg'}"
                            "gqa: {'train', 'train+val'}"
                            "clevr: {'train', 'train+val'}"
+                           "vizwiz: {'train', 'train+val'}"
                         ,
                       type=str)
 
