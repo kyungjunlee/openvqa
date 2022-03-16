@@ -18,6 +18,10 @@ class Adapter(BaseAdapter):
 
     def vqa_init(self, __C):
         self.frcn_linear = nn.Linear(__C.FEAT_SIZE['vqa']['FRCN_FEAT_SIZE'][1], __C.HIDDEN_SIZE)
+    
+
+    def vizwiz_init(self, __C):
+        self.frcn_linear = nn.Linear(__C.FEAT_SIZE['vqa']['FRCN_FEAT_SIZE'][1], __C.HIDDEN_SIZE)
 
 
     def gqa_init(self, __C):
@@ -42,6 +46,18 @@ class Adapter(BaseAdapter):
         #[N, C, W] = img_feat.shape
         #img_feat = F.normalize(img_feat.view(N, -1)).view(N, C, W)
         return img_feat, img_feat_mask
+    
+
+    def vizwiz_forward(self, feat_dict):
+        frcn_feat = feat_dict['FRCN_FEAT']
+        bbox_feat = feat_dict['BBOX_FEAT']
+
+        img_feat_mask = make_mask(frcn_feat)
+        img_feat = frcn_feat
+        #[N, C, W] = img_feat.shape
+        #img_feat = F.normalize(img_feat.view(N, -1)).view(N, C, W)
+        return img_feat, img_feat_mask
+
 
     def gqa_forward(self, feat_dict):
         frcn_feat = feat_dict['FRCN_FEAT']
