@@ -35,7 +35,6 @@ def test_engine(__C, dataset, state_dict=None, validation=False):
 
         if __C.N_GPU > 1:
             state_dict = ckpt_proc(state_dict)
-
     # Store the prediction list
     # qid_list = [ques['question_id'] for ques in dataset.ques_list]
     ans_ix_list = []
@@ -75,7 +74,10 @@ def test_engine(__C, dataset, state_dict=None, validation=False):
             ques_ix_iter,
             ans_iter
     ) in enumerate(dataloader):
-
+        
+        #if step > 150:
+        #    print(step)
+        #    break
         print("\rEvaluation: [step %4d/%4d]" % (
             step,
             int(data_size / __C.EVAL_BATCH_SIZE),
