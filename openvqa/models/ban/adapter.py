@@ -35,6 +35,8 @@ class Adapter(BaseAdapter):
     def clevr_init(self, __C):
         self.grid_linear = nn.Linear(__C.FEAT_SIZE['clevr']['GRID_FEAT_SIZE'][1], __C.HIDDEN_SIZE)
 
+    def vizwiz_init(self, __C):
+        pass
 
     def vqa_forward(self, feat_dict):
         frcn_feat = feat_dict['FRCN_FEAT']
@@ -69,5 +71,12 @@ class Adapter(BaseAdapter):
 
         return img_feat, img_feat_mask
 
+    def vizwiz_forward(self, feat_dict):
+        frcn_feat = feat_dict['FRCN_FEAT']
+        bbox_feat = feat_dict['BBOX_FEAT']
 
+        img_feat_mask = make_mask(frcn_feat)
+        # img_feat = self.frcn_linear(frcn_feat)
+
+        return frcn_feat, img_feat_mask
 

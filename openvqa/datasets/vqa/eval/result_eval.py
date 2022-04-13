@@ -10,6 +10,16 @@ def eval(__C, dataset, ans_ix_list, pred_list, result_eval_file, ensemble_file, 
     qid_list = [ques['question_id'] for ques in dataset.ques_list]
     ans_size = dataset.ans_size
 
+    # very large numbers, question id's
+    #print(qid_list)
+    #print(len(qid_list))
+    print(qid_list.__len__())
+    # list of what I assume are indices [267, 1559, ...]
+    print(len(ans_ix_list))
+    # dict of index to ans, both strings need str()
+    #print(dataset.ix_to_ans)
+    
+    # the problem is the length of qid_list is much longer thatn ans_ix_list
     result = [{
         'answer': dataset.ix_to_ans[str(ans_ix_list[qix])],
         # 'answer': dataset.ix_to_ans[ans_ix_list[qix]],
@@ -36,6 +46,10 @@ def eval(__C, dataset, ans_ix_list, pred_list, result_eval_file, ensemble_file, 
         # create vqa object and vqaRes object
         ques_file_path = __C.RAW_PATH[__C.DATASET][__C.SPLIT['val']]
         ans_file_path = __C.RAW_PATH[__C.DATASET][__C.SPLIT['val'] + '-anno']
+
+        #print(ques_file_path)
+        #print(ans_file_path)
+        #print(result_eval_file)
 
         vqa = VQA(ans_file_path, ques_file_path)
         vqaRes = vqa.loadRes(result_eval_file, ques_file_path)
