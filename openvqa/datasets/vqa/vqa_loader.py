@@ -90,14 +90,15 @@ class DataSet(BaseDataSet):
         print(' ========== Question token vocab size:', self.token_size)
 
         # Answers statistic
-        ans_to_ix, ix_to_ans = self.ans_stat(viz_stat_ans_list, ans_freq=5)
+        vizwiz_ans_to_ix, vizwiz_ix_to_ans = self.ans_stat(viz_stat_ans_list, ans_freq=5)
         self.ans_to_ix, self.ix_to_ans = self.vqa_ans_stat('openvqa/datasets/vqa/answer_dict.json')
-        addition = len(self.ans_to_ix)
-        m = 0
-        for key, item in ans_to_ix.items():
-            if key not in self.ans_to_ix:
-                self.ans_to_ix[key] = addition+m
-                m += 1
+        new_ix = len(self.ans_to_ix)
+        for vizwiz_ans, ix in vizwiz_ans_to_ix.items():
+            if vizwiz_ans not in self.ans_to_ix:
+                self.ans_to_ix[vizwiz_ans] = new_ix
+                self.ix_to_ans[str(new_ix)] = vizwiz_ans
+                new_ix += 1
+
         #print(self.ans_to_ix)
         #self.ans_to_ix, self.ix_to_ans = self.ans_stat(stat_ans_list, ans_freq=8)
         self.ans_size = self.ans_to_ix.__len__()
