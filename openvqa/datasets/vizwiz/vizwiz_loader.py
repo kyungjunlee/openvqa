@@ -103,14 +103,15 @@ class DataSet(BaseDataSet):
         # Answers statistic
         #self.ans_to_ix, self.ix_to_ans = self.ans_stat_vqa('openvqa/datasets/vqa/answer_dict.json')
         # TODO: what value should we use for "ans_freq" in the function below?
-        ans_to_ix, _ = self.ans_stat_vqa('openvqa/datasets/vqa/answer_dict.json')
+        vizwiz_ans_to_ix, _ = self.ans_stat_vqa('openvqa/datasets/vqa/answer_dict.json')
         self.ans_to_ix, self.ix_to_ans = self.ans_stat(stat_ans_list, ans_freq=5)
-        addition = len(self.ans_to_ix)
-        m = 0
-        for key, item in ans_to_ix.items():
-            if key not in self.ans_to_ix:
-                self.ans_to_ix[key] = addition+m
-                m += 1
+        new_ix = len(self.ans_to_ix)
+        for vizwiz_ans, ix in vizwiz_ans_to_ix.items():
+            if vizwiz_ans not in self.ans_to_ix:
+                self.ans_to_ix[vizwiz_ans] = new_ix
+                self.ix_to_ans[str(new_ix)] = vizwiz_ans
+                new_ix += 1
+        
         #self.ans_to_ix, self.ix_to_ans = self.ans_stat_vqa('openvqa/datasets/vqa/answer_dict.json')
         self.ans_size = self.ans_to_ix.__len__()
         #self.ans_size = 3129
