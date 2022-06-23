@@ -18,6 +18,10 @@ class Adapter(BaseAdapter):
 
     def vqa_init(self, __C):
         self.frcn_linear = nn.Linear(__C.FEAT_SIZE['vqa']['FRCN_FEAT_SIZE'][1], __C.HIDDEN_SIZE)
+    
+
+    def vizwiz_init(self, __C):
+        self.frcn_linear = nn.Linear(__C.FEAT_SIZE['vqa']['FRCN_FEAT_SIZE'][1], __C.HIDDEN_SIZE)
 
 
     def gqa_init(self, __C):
@@ -32,9 +36,6 @@ class Adapter(BaseAdapter):
     def clevr_init(self, __C):
         self.grid_linear = nn.Linear(__C.FEAT_SIZE['clevr']['GRID_FEAT_SIZE'][1], __C.HIDDEN_SIZE)
 
-    def vizwiz_init(self, __C):
-        self.frcn_linear = nn.Linear(__C.FEAT_SIZE['vizwiz']['FRCN_FEAT_SIZE'][1], __C.HIDDEN_SIZE)
-
 
     def vqa_forward(self, feat_dict):
         frcn_feat = feat_dict['FRCN_FEAT']
@@ -45,6 +46,18 @@ class Adapter(BaseAdapter):
         #[N, C, W] = img_feat.shape
         #img_feat = F.normalize(img_feat.view(N, -1)).view(N, C, W)
         return img_feat, img_feat_mask
+    
+
+    def vizwiz_forward(self, feat_dict):
+        frcn_feat = feat_dict['FRCN_FEAT']
+        bbox_feat = feat_dict['BBOX_FEAT']
+
+        img_feat_mask = make_mask(frcn_feat)
+        img_feat = frcn_feat
+        #[N, C, W] = img_feat.shape
+        #img_feat = F.normalize(img_feat.view(N, -1)).view(N, C, W)
+        return img_feat, img_feat_mask
+
 
     def gqa_forward(self, feat_dict):
         frcn_feat = feat_dict['FRCN_FEAT']
@@ -67,15 +80,4 @@ class Adapter(BaseAdapter):
         img_feat_mask = make_mask(grid_feat)
         img_feat = self.grid_linear(grid_feat)
 
-        return img_feat, img_feat_mask
-
-
-    def vizwiz_forward(self, feat_dict):
-        frcn_feat = feat_dict['FRCN_FEAT']
-        bbox_feat = feat_dict['BBOX_FEAT']
-
-        img_feat_mask = make_mask(frcn_feat)
-        img_feat = frcn_feat
-        #[N, C, W] = img_feat.shape
-        #img_feat = F.normalize(img_feat.view(N, -1)).view(N, C, W)
         return img_feat, img_feat_mask

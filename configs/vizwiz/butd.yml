@@ -1,4 +1,4 @@
-#Network
+# Network
 MODEL_USE: butd
 HIDDEN_SIZE: 1024
 DROPOUT_R: 0.2

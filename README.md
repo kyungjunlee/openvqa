@@ -18,6 +18,19 @@ OpenVQA is a general platform for visual question ansering (VQA) research, with 
 
 Getting started and learn more about OpenVQA [here](https://openvqa.readthedocs.io/en/latest/).
 
+
+## VizWiz Image Features
+
+The bottom-up-attention model is used to extract image features from the [VizWiz](https://vizwiz.org/tasks-and-datasets/vqa/) dataset (i.e., VizWiz VQA dataset available since January 1, 2020). Its feature extraction script can be found in the following link: [extract_feature_to_npz.py](https://github.com/kyungjunlee/bottom-up-attention/blob/master/tools/extract_feature_to_npz.py).
+
+
+Download each tar.gz file and untar it under `data/vizwiz/feats/`.
+- [train set](https://umd.box.com/s/6yn454whcz8hukz16xpkcjydfkknw537)
+- [validation set](https://umd.box.com/s/2nppz3xnz15izqxbc44ugtifgx36981f)
+- [test set](https://umd.box.com/s/ngijmh73sft0zi9xcedim62j4f3g97w5)
+
+
+
 ## Benchmark and Model Zoo
 
 Supported methods and benchmark datasets are shown in the below table.
