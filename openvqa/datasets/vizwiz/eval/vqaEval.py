@@ -90,7 +90,7 @@ class VQAEval:
 			for quesId in quesIds:
 				# NOT CORRECT BUT HACKING FOR NOW TO TEST REST
 				#print(res[quesId]['question'])
-				resAns      = res[quesId]['answers'][0]['answer']
+				resAns      = res[quesId]['answer']
 				#print("The original answer to compare: ", resAns)
 				resAns      = resAns.replace('\n', ' ')
 				resAns      = resAns.replace('\t', ' ')
@@ -106,10 +106,10 @@ class VQAEval:
 				#print(gts[quesId]['answers'])
 
 				############# Changing evaluation to be just mathcing 3 answers #############
-				#pred = res[quesId]['answers'][0]
+				#pred = res[quesId]['answer']
 				#print(pred)
 				#print(gts[quesId]['answers'])
-				#count = [item==pred for item in gts[quesId]['answers']]
+				#count = [item['answer']==pred for item in gts[quesId]['answers']]
 				#print(count)
 				#print(sum(count))
 				#acc = min(1, sum(count)/3)
@@ -130,7 +130,7 @@ class VQAEval:
 				avgGTAcc = float(sum(gtAcc))/len(gtAcc)
 				accQA.append(avgGTAcc)
 				writer = csv.writer(csvfile)
-				writer.writerow([res[quesId]['answers'][0]['answer'], avgGTAcc])
+				writer.writerow([gts[quesId]['question'], res[quesId]['answer'], avgGTAcc])
 				#if quesType not in accQuesType:
 					#accQuesType[quesType] = []
 				#accQuesType[quesType].append(avgGTAcc)

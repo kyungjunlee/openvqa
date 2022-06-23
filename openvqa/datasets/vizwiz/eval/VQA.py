@@ -192,12 +192,14 @@ class VQA:
 #				assert ann['answer'] in self.qqa[quesId][
 #					'multiple_choices'], 'predicted answer is not one of the multiple choices'
 			qaAnn = self.qa[quesId+'.jpg']
-			ann['image_id'] = qaAnn['image']
+			ann['image'] = qaAnn['image']
+			ann['question'] = self.qqa[quesId+'.jpg']
 			# only one type for vizwiz
 			#ann['question_type'] = qaAnn['question_type']
 			ann['answer_type'] = qaAnn['answer_type']
 		print('DONE (t=%0.2fs)' % ((datetime.datetime.utcnow() - time_t).total_seconds()))
 
-		#res.dataset['annotations'] = anns
+		# res.dataset['annotations'] = anns
+		res.dataset = anns
 		res.createIndex()
 		return res

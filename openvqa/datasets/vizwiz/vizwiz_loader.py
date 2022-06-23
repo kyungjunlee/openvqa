@@ -34,6 +34,7 @@ class DataSet(BaseDataSet):
             json.load(open(__C.RAW_PATH[__C.DATASET]['test'], 'r'))
 
         #print(__C.RAW_PATH)
+        """
         # to get get around the Net mismatch size, loading the VQA ans/ques list to get same size
         # should actually use universal one
         vqa_stat_ques_list = \
@@ -41,7 +42,7 @@ class DataSet(BaseDataSet):
             json.load(open(__C.RAW_PATH['vqa']['val'], 'r'))['questions'] + \
             json.load(open(__C.RAW_PATH['vqa']['test'], 'r'))['questions'] + \
             json.load(open(__C.RAW_PATH['vqa']['vg'], 'r'))['questions']
-
+        """
         # Loading answer word list
         # Each of VizWiz annotation files include both questions and answers.
         stat_ans_list = \
@@ -80,8 +81,9 @@ class DataSet(BaseDataSet):
         self.qid_to_ques = self.ques_load(self.ques_list)
 
         # Tokenize
-        vqa_token, vqa_pretrained_emb = self.tokenize(vqa_stat_ques_list, __C.USE_GLOVE)
         self.token_to_ix, self.pretrained_emb = self.tokenize(stat_ques_list, __C.USE_GLOVE)
+        """
+        vqa_token, vqa_pretrained_emb = self.tokenize(vqa_stat_ques_list, __C.USE_GLOVE)
         addition = len(self.token_to_ix)
         k = 0
         for key, item in vqa_token.items():
@@ -90,6 +92,7 @@ class DataSet(BaseDataSet):
                 k += 1
         #self.pretrained_emb = np.vstack((self.pretrained_emb,vqa_pretrained_emb))
         self.pretrained_emb = self.create_pretrained_embeddings(self.token_to_ix)
+        """
         # all words just tokenized
         #print(self.token_to_ix)
         # embedding (4863, 300)
@@ -101,21 +104,24 @@ class DataSet(BaseDataSet):
         print(' ========== Question token vocab size:', self.token_size)
 
         # Answers statistic
-        #self.ans_to_ix, self.ix_to_ans = self.ans_stat_vqa('openvqa/datasets/vqa/answer_dict.json')
+        self.ans_to_ix, self.ix_to_ans = self.vizwiz_ans_stat('openvqa/datasets/vizwiz/answers_vizwiz_7k.txt')
         # TODO: what value should we use for "ans_freq" in the function below?
+        # ans_freq_threshold = 5
+        # self.ans_to_ix, self.ix_to_ans = self.ans_stat(stat_ans_list, ans_freq=ans_freq_threshold)
+        """
         vizwiz_ans_to_ix, _ = self.ans_stat_vqa('openvqa/datasets/vqa/answer_dict.json')
-        self.ans_to_ix, self.ix_to_ans = self.ans_stat(stat_ans_list, ans_freq=5)
         new_ix = len(self.ans_to_ix)
         for vizwiz_ans, ix in vizwiz_ans_to_ix.items():
             if vizwiz_ans not in self.ans_to_ix:
                 self.ans_to_ix[vizwiz_ans] = new_ix
                 self.ix_to_ans[str(new_ix)] = vizwiz_ans
                 new_ix += 1
-        
         #self.ans_to_ix, self.ix_to_ans = self.ans_stat_vqa('openvqa/datasets/vqa/answer_dict.json')
+        """
         self.ans_size = self.ans_to_ix.__len__()
         #self.ans_size = 3129
-        print(' ========== Answer token vocab size (occur more than {} times):'.format(5), self.ans_size)
+        # print(' ========== Answer token vocab size (occur more than {} times):'.format(ans_freq_threshold), self.ans_size)
+        print(' ========== Answer token vocab size:', self.ans_size)
         print('Finished!')
         print('')
 
@@ -222,11 +228,19 @@ class DataSet(BaseDataSet):
     
         return ans_to_ix, ix_to_ans
 
-    # def ans_stat(self, json_file):
-    #     ans_to_ix, ix_to_ans = json.load(open(json_file, 'r'))
+    def vizwiz_ans_stat(self, txt_file):
+        ans_to_ix = {}
+        ix_to_ans = {}
+        with open(txt_file, 'r') as f:
+            idx = 0
+            for line in f:
+                answer = line.strip()
+                # ix = str(idx)
+                ans_to_ix[answer] = idx
+                ix_to_ans[idx] = answer
+                idx += 1
 
-    #     return ans_to_ix, ix_to_ans
-
+        return ans_to_ix, ix_to_ans
 
 
     # ----------------------------------------------

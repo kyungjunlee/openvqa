@@ -134,6 +134,11 @@ def parse_args():
                       help='True: verbose print, False: simple print',
                       type=str)
 
+    parser.add_argument('--FINETUNE', dest='FINETUNE',
+                      choices=['True', 'False'],
+                      help='True: finetuning mode, False: no finetuning mode',
+                      type=str)
+
 
     args = parser.parse_args()
     return args

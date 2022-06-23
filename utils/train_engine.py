@@ -36,8 +36,14 @@ def train_engine(__C, dataset, dataset_eval=None):
     loss_fn = eval('torch.nn.' + __C.LOSS_FUNC_NAME_DICT[__C.LOSS_FUNC] + "(reduction='" + __C.LOSS_REDUCTION + "').cuda()")
 
     # Load checkpoint if resume training
-    if __C.RESUME:
-        print(' ========== Resume training')
+    ## For VizWiz
+    # Finetuning checkpoint if finetuning as well
+    if __C.RESUME or __C.FINETUNE:
+        if __C.RESUME:
+            print(' ========== Resume training')
+        ## For VizWiz
+        if __C.FINETUNE:
+            print(' ========== Do finetuning')
 
         if __C.CKPT_PATH is not None:
             print('Warning: Now using CKPT_PATH args, '
@@ -54,16 +60,48 @@ def train_engine(__C, dataset, dataset_eval=None):
         ckpt = torch.load(path)
         print('Finish!')
 
-        if __C.N_GPU > 1:
-            net.load_state_dict(ckpt_proc(ckpt['state_dict']))
-        else:
-            net.load_state_dict(ckpt['state_dict'])
-        start_epoch = ckpt['epoch']
+        ## DEBUG for VizWiz
+        # print(">> Checking parameters in the model")
+        # for param_tensor in net.state_dict():
+        #     # print(param_tensor, '\t', net.state_dict()[param_tensor].size())
+        #     model_param_size = net.state_dict()[param_tensor].size()
+        #     pretrained_param_size = ckpt['state_dict'][param_tensor].size()
+        #     if model_param_size != pretrained_param_size:
+        #         print("{} differs: [model] {} vs. [pretrained] {}".format(
+        #                 param_tensor, model_param_size, pretrained_param_size))
+        # assert False
+        ##
 
+        ## For VizWiz
+        # Load the pretrained parameters except for the clasifier
+        # The name of the classification layer:
+        #   "classifer" in ban, butd (note the typo)
+        #   "proj" in mcan, mfb, mmnasnet
+        pretrained_dict = {k: v for k, v in ckpt['state_dict'].items()
+                if "classifer" not in k and "embedding" not in k and "proj" not in k}
+
+        if __C.N_GPU > 1:
+            # net.load_state_dict(ckpt_proc(ckpt['state_dict']))
+            ## For VizWiz
+            # Load parameters that match the size
+            net.load_state_dict(ckpt_proc(pretrained_dict), strict=False)
+        else:
+            # net.load_state_dict(ckpt['state_dict'])
+            ## For VizWiz
+            # Load parameters that match the size
+            net.load_state_dict(pretrained_dict, strict=False)
+        
         # Load the optimizer paramters
         optim = get_optim(__C, net, data_size, ckpt['lr_base'])
-        optim._step = int(data_size / __C.BATCH_SIZE * start_epoch)
-        optim.optimizer.load_state_dict(ckpt['optimizer'])
+        ## For VizWiz
+        if __C.FINETUNE:
+            start_epoch = 0
+            optim._step = 0
+
+        if __C.RESUME:
+            start_epoch = ckpt['epoch']
+            optim._step = int(data_size / __C.BATCH_SIZE * start_epoch)
+            optim.optimizer.load_state_dict(ckpt['optimizer'])
         
         if ('ckpt_' + __C.VERSION) not in os.listdir(__C.CKPTS_PATH):
             os.mkdir(__C.CKPTS_PATH + '/ckpt_' + __C.VERSION)

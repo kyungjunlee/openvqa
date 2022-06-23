@@ -29,7 +29,7 @@ class DataSet(BaseDataSet):
             json.load(open(__C.RAW_PATH[__C.DATASET]['val'], 'r'))['questions'] + \
             json.load(open(__C.RAW_PATH[__C.DATASET]['test'], 'r'))['questions'] + \
             json.load(open(__C.RAW_PATH[__C.DATASET]['vg'], 'r'))['questions']
-
+        """
         viz_stat_ques_list = \
             json.load(open(__C.RAW_PATH['vizwiz']['train'], 'r')) + \
             json.load(open(__C.RAW_PATH['vizwiz']['val'], 'r')) + \
@@ -38,6 +38,7 @@ class DataSet(BaseDataSet):
         viz_stat_ans_list = \
             json.load(open(__C.RAW_PATH['vizwiz']['train'], 'r')) + \
             json.load(open(__C.RAW_PATH['vizwiz']['val'], 'r'))
+        """
 
         # Loading answer word list
         # stat_ans_list = \
@@ -74,9 +75,9 @@ class DataSet(BaseDataSet):
         self.qid_to_ques = self.ques_load(self.ques_list)
 
         # Tokenize
-
-        viz_token, viz_pretrained_emb = self.tokenize(viz_stat_ques_list, __C.USE_GLOVE)
         self.token_to_ix, self.pretrained_emb = self.tokenize(stat_ques_list, __C.USE_GLOVE)
+        """
+        viz_token, viz_pretrained_emb = self.tokenize(viz_stat_ques_list, __C.USE_GLOVE)
         addition = len(self.token_to_ix)
         k = 0
         for key, item in viz_token.items():
@@ -86,20 +87,22 @@ class DataSet(BaseDataSet):
         #print(self.token_to_ix)
         #self.pretrained_emb = np.vstack((self.pretrained_emb,vqa_pretrained_emb))
         self.pretrained_emb = self.create_pretrained_embeddings(self.token_to_ix)
+        """
         self.token_size = self.token_to_ix.__len__()
         print(' ========== Question token vocab size:', self.token_size)
 
         # Answers statistic
-        vizwiz_ans_to_ix, vizwiz_ix_to_ans = self.ans_stat(viz_stat_ans_list, ans_freq=5)
         self.ans_to_ix, self.ix_to_ans = self.vqa_ans_stat('openvqa/datasets/vqa/answer_dict.json')
+        """
+        vizwiz_ans_to_ix, vizwiz_ix_to_ans = self.ans_stat(viz_stat_ans_list, ans_freq=5)
         new_ix = len(self.ans_to_ix)
         for vizwiz_ans, ix in vizwiz_ans_to_ix.items():
             if vizwiz_ans not in self.ans_to_ix:
                 self.ans_to_ix[vizwiz_ans] = new_ix
                 self.ix_to_ans[str(new_ix)] = vizwiz_ans
                 new_ix += 1
-
         #print(self.ans_to_ix)
+        """
         #self.ans_to_ix, self.ix_to_ans = self.ans_stat(stat_ans_list, ans_freq=8)
         self.ans_size = self.ans_to_ix.__len__()
         print(' ========== Answer token vocab size (occur more than {} times):'.format(5), self.ans_size)
