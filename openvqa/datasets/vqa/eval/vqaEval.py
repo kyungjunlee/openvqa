@@ -84,6 +84,7 @@ class VQAEval:
 		step = 0
 		for quesId in quesIds:
 			resAns      = res[quesId]['answer']
+			#print("resAns", resAns)
 			resAns      = resAns.replace('\n', ' ')
 			resAns      = resAns.replace('\t', ' ')
 			resAns      = resAns.strip()
@@ -91,12 +92,14 @@ class VQAEval:
 			resAns      = self.processDigitArticle(resAns)
 			gtAcc  = []
 			gtAnswers = [ans['answer'] for ans in gts[quesId]['answers']]
+			#print(gtAnswers)
 			if len(set(gtAnswers)) > 1: 
 				for ansDic in gts[quesId]['answers']:
 					ansDic['answer'] = self.processPunctuation(ansDic['answer'])
 			for gtAnsDatum in gts[quesId]['answers']:
 				otherGTAns = [item for item in gts[quesId]['answers'] if item!=gtAnsDatum]
 				matchingAns = [item for item in otherGTAns if item['answer']==resAns]
+				#print(matchingAns)
 				acc = min(1, float(len(matchingAns))/3)
 				gtAcc.append(acc)
 			quesType    = gts[quesId]['question_type']

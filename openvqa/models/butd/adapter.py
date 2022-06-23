@@ -39,6 +39,7 @@ class Adapter(BaseAdapter):
     def clevr_init(self, __C):
         self.grid_linear = nn.Linear(
             __C.FEAT_SIZE['clevr']['GRID_FEAT_SIZE'][1], __C.HIDDEN_SIZE)
+    
 
     def vqa_forward(self, feat_dict):
         frcn_feat = feat_dict['FRCN_FEAT']
@@ -82,6 +83,3 @@ class Adapter(BaseAdapter):
         img_feat = self.grid_linear(grid_feat)
 
         return img_feat, img_feat_mask
-
-
-

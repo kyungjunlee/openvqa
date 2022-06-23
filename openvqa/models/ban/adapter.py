@@ -84,5 +84,3 @@ class Adapter(BaseAdapter):
 
         return img_feat, img_feat_mask
 
-
-

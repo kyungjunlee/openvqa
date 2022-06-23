@@ -37,7 +37,7 @@ class VQA:
 		self.qqa = {}
 		self.imgToQA = {}
 		if not annotation_file == None and not question_file == None:
-			print('loading VQA annotations and questions into memory...')
+			print('loading VizWiz annotations and questions into memory...')
 			time_t = datetime.datetime.utcnow()
 			dataset = json.load(open(annotation_file, 'r'))
 			questions = json.load(open(question_file, 'r'))
@@ -59,9 +59,12 @@ class VQA:
 		qqa = {}
 		for each in self.dataset:
 			# image id = question id in VizWiz
-			image_id = self.getImageId(each['image'])
+			#image_id = self.getImageId(each['image'])
+			image_id = each['image']
+			# the question/answer for each image ID
 			imgToQA[image_id] = each
 			qa[image_id] = each
+			# the actual question
 			qqa[image_id] = each['question']
 		# for ann in self.dataset:
 		# 	imgToQA[ann['image_id']] += [ann]
@@ -94,21 +97,22 @@ class VQA:
 				ansTypes  (str array)   : get question ids for given answer types
 		:return:    ids   (int array)   : integer array of question ids
 		"""
-		imgIds = imgIds if type(imgIds) == list else [imgIds]
-		quesTypes = quesTypes if type(quesTypes) == list else [quesTypes]
-		ansTypes = ansTypes if type(ansTypes) == list else [ansTypes]
+		#imgIds = imgIds if type(imgIds) == list else [imgIds]
+		#quesTypes = quesTypes if type(quesTypes) == list else [quesTypes]
+		#ansTypes = ansTypes if type(ansTypes) == list else [ansTypes]
 
-		if len(imgIds) == len(quesTypes) == len(ansTypes) == 0:
-			anns = self.dataset['annotations']
-		else:
-			if not len(imgIds) == 0:
-				anns = sum([self.imgToQA[imgId] for imgId in imgIds if imgId in self.imgToQA], [])
-			else:
-				anns = self.dataset['annotations']
-			anns = anns if len(quesTypes) == 0 else [ann for ann in anns if ann['question_type'] in quesTypes]
-			anns = anns if len(ansTypes) == 0 else [ann for ann in anns if ann['answer_type'] in ansTypes]
-		ids = [ann['question_id'] for ann in anns]
-		return ids
+		#if len(imgIds) == len(quesTypes) == len(ansTypes) == 0:
+		#	anns = self.dataset['annotations']
+		#else:
+		#	if not len(imgIds) == 0:
+		#		anns = sum([self.imgToQA[imgId] for imgId in imgIds if imgId in self.imgToQA], [])
+		#	else:
+		#		anns = self.dataset['annotations']
+		#	anns = anns if len(quesTypes) == 0 else [ann for ann in anns if ann['question_type'] in quesTypes]
+		#	anns = anns if len(ansTypes) == 0 else [ann for ann in anns if ann['answer_type'] in ansTypes]
+		#ids = [ann['question_id'] for ann in anns]
+		#return ids
+		return [self.getImageId(each['image']) for each in self.dataset]
 
 	def getImgIds(self, quesIds=[], quesTypes=[], ansTypes=[]):
 		"""
@@ -122,17 +126,18 @@ class VQA:
 		quesTypes = quesTypes if type(quesTypes) == list else [quesTypes]
 		ansTypes = ansTypes if type(ansTypes) == list else [ansTypes]
 
-		if len(quesIds) == len(quesTypes) == len(ansTypes) == 0:
-			anns = self.dataset['annotations']
-		else:
-			if not len(quesIds) == 0:
-				anns = sum([self.qa[quesId] for quesId in quesIds if quesId in self.qa], [])
-			else:
-				anns = self.dataset['annotations']
-			anns = anns if len(quesTypes) == 0 else [ann for ann in anns if ann['question_type'] in quesTypes]
-			anns = anns if len(ansTypes) == 0 else [ann for ann in anns if ann['answer_type'] in ansTypes]
-		ids = [ann['image_id'] for ann in anns]
-		return ids
+		#if len(quesIds) == len(quesTypes) == len(ansTypes) == 0:
+		#	anns = self.dataset['annotations']
+		#else:
+		#	if not len(quesIds) == 0:
+		#		anns = sum([self.qa[quesId] for quesId in quesIds if quesId in self.qa], [])
+		#	else:
+		#		anns = self.dataset['annotations']
+		#	anns = anns if len(quesTypes) == 0 else [ann for ann in anns if ann['question_type'] in quesTypes]
+		#	anns = anns if len(ansTypes) == 0 else [ann for ann in anns if ann['answer_type'] in ansTypes]
+		#ids = [ann['image_id'] for ann in anns]
+		#return ids
+		return [self.getImageId(each['image']) for each in self.dataset]
 
 	def loadQA(self, ids=[]):
 		"""
@@ -167,11 +172,12 @@ class VQA:
 		"""
 		res = VQA()
 		res.questions = json.load(open(quesFile))
-		res.dataset['info'] = copy.deepcopy(self.questions['info'])
-		res.dataset['task_type'] = copy.deepcopy(self.questions['task_type'])
-		res.dataset['data_type'] = copy.deepcopy(self.questions['data_type'])
-		res.dataset['data_subtype'] = copy.deepcopy(self.questions['data_subtype'])
-		res.dataset['license'] = copy.deepcopy(self.questions['license'])
+		res.dataset = json.load(open(quesFile))
+#		res.dataset['info'] = copy.deepcopy(self.questions['info'])
+#		res.dataset['task_type'] = copy.deepcopy(self.questions['task_type'])
+#		res.dataset['data_type'] = copy.deepcopy(self.questions['data_type'])
+#		res.dataset['data_subtype'] = copy.deepcopy(self.questions['data_subtype'])
+#		res.dataset['license'] = copy.deepcopy(self.questions['license'])
 
 		print('Loading and preparing results...     ')
 		time_t = datetime.datetime.utcnow()
@@ -182,15 +188,18 @@ class VQA:
 			'Results do not correspond to current VQA set. Either the results do not have predictions for all question ids in annotation file or there is atleast one question id that does not belong to the question ids in the annotation file.'
 		for ann in anns:
 			quesId = ann['question_id']
-			if res.dataset['task_type'] == 'Multiple Choice':
-				assert ann['answer'] in self.qqa[quesId][
-					'multiple_choices'], 'predicted answer is not one of the multiple choices'
-			qaAnn = self.qa[quesId]
-			ann['image_id'] = qaAnn['image_id']
-			ann['question_type'] = qaAnn['question_type']
+#			if res.dataset['task_type'] == 'Multiple Choice':
+#				assert ann['answer'] in self.qqa[quesId][
+#					'multiple_choices'], 'predicted answer is not one of the multiple choices'
+			qaAnn = self.qa[quesId+'.jpg']
+			ann['image'] = qaAnn['image']
+			ann['question'] = self.qqa[quesId+'.jpg']
+			# only one type for vizwiz
+			#ann['question_type'] = qaAnn['question_type']
 			ann['answer_type'] = qaAnn['answer_type']
 		print('DONE (t=%0.2fs)' % ((datetime.datetime.utcnow() - time_t).total_seconds()))
 
-		res.dataset['annotations'] = anns
+		# res.dataset['annotations'] = anns
+		res.dataset = anns
 		res.createIndex()
 		return res

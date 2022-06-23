@@ -42,6 +42,10 @@ class BaseCfgs(PATH):
         # Print loss every iteration
         self.VERBOSE = True
 
+        ## For VizWiz
+        # Use finetuning mode
+        self.FINETUNE = False
+
 
         # ------------------------------
         # ---- Data Provider Params ----
@@ -189,6 +193,7 @@ class BaseCfgs(PATH):
             'RESUME',
             'PIN_MEM',
             'VERBOSE',
+            'FINETUNE', ## For VizWiz
         ]
 
         for arg in dir(args):

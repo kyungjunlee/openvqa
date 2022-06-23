@@ -108,4 +108,3 @@ class Adapter(BaseAdapter):
         img_feat = self.grid_linear(grid_feat)
 
         return img_feat, img_feat_mask
-

@@ -29,6 +29,16 @@ class DataSet(BaseDataSet):
             json.load(open(__C.RAW_PATH[__C.DATASET]['val'], 'r'))['questions'] + \
             json.load(open(__C.RAW_PATH[__C.DATASET]['test'], 'r'))['questions'] + \
             json.load(open(__C.RAW_PATH[__C.DATASET]['vg'], 'r'))['questions']
+        """
+        viz_stat_ques_list = \
+            json.load(open(__C.RAW_PATH['vizwiz']['train'], 'r')) + \
+            json.load(open(__C.RAW_PATH['vizwiz']['val'], 'r')) + \
+            json.load(open(__C.RAW_PATH['vizwiz']['test'], 'r'))
+
+        viz_stat_ans_list = \
+            json.load(open(__C.RAW_PATH['vizwiz']['train'], 'r')) + \
+            json.load(open(__C.RAW_PATH['vizwiz']['val'], 'r'))
+        """
 
         # Loading answer word list
         # stat_ans_list = \
@@ -66,14 +76,36 @@ class DataSet(BaseDataSet):
 
         # Tokenize
         self.token_to_ix, self.pretrained_emb = self.tokenize(stat_ques_list, __C.USE_GLOVE)
+        """
+        viz_token, viz_pretrained_emb = self.tokenize(viz_stat_ques_list, __C.USE_GLOVE)
+        addition = len(self.token_to_ix)
+        k = 0
+        for key, item in viz_token.items():
+            if key not in self.token_to_ix:
+                self.token_to_ix[key] = addition+k
+                k += 1
+        #print(self.token_to_ix)
+        #self.pretrained_emb = np.vstack((self.pretrained_emb,vqa_pretrained_emb))
+        self.pretrained_emb = self.create_pretrained_embeddings(self.token_to_ix)
+        """
         self.token_size = self.token_to_ix.__len__()
         print(' ========== Question token vocab size:', self.token_size)
 
         # Answers statistic
-        self.ans_to_ix, self.ix_to_ans = self.ans_stat('openvqa/datasets/vqa/answer_dict.json')
-        # self.ans_to_ix, self.ix_to_ans = self.ans_stat(stat_ans_list, ans_freq=8)
+        self.ans_to_ix, self.ix_to_ans = self.vqa_ans_stat('openvqa/datasets/vqa/answer_dict.json')
+        """
+        vizwiz_ans_to_ix, vizwiz_ix_to_ans = self.ans_stat(viz_stat_ans_list, ans_freq=5)
+        new_ix = len(self.ans_to_ix)
+        for vizwiz_ans, ix in vizwiz_ans_to_ix.items():
+            if vizwiz_ans not in self.ans_to_ix:
+                self.ans_to_ix[vizwiz_ans] = new_ix
+                self.ix_to_ans[str(new_ix)] = vizwiz_ans
+                new_ix += 1
+        #print(self.ans_to_ix)
+        """
+        #self.ans_to_ix, self.ix_to_ans = self.ans_stat(stat_ans_list, ans_freq=8)
         self.ans_size = self.ans_to_ix.__len__()
-        print(' ========== Answer token vocab size (occur more than {} times):'.format(8), self.ans_size)
+        print(' ========== Answer token vocab size (occur more than {} times):'.format(5), self.ans_size)
         print('Finished!')
         print('')
 
@@ -99,6 +131,16 @@ class DataSet(BaseDataSet):
 
         return qid_to_ques
 
+    def create_pretrained_embeddings(self, tokens):
+        spacy_tool = None
+        pretrained_emb = []
+        spacy_tool = en_vectors_web_lg.load()
+
+        for key, item in tokens.items():
+            pretrained_emb.append(spacy_tool(key).vector)
+
+        pretrained_emb = np.array(pretrained_emb)
+        return pretrained_emb
 
     def tokenize(self, stat_ques_list, use_glove):
         token_to_ix = {
@@ -155,8 +197,36 @@ class DataSet(BaseDataSet):
     #         ans_to_ix[ans] = ans_to_ix.__len__()
     #
     #     return ans_to_ix, ix_to_ans
+    def ans_stat(self, stat_ans_list, ans_freq):
+        ans_to_ix = {}
+        ix_to_ans = {}
+        ans_freq_dict = {}
+    
+        for ans in stat_ans_list:
+            # VizWiz does not have "multiple_choice_answer" annotation.
+            # TODO: what would be the right behavior for VizWiz then?
+            # ans_proc = prep_ans(ans['multiple_choice_answer'])
+            for each in ans['answers']:
+                ans_proc = prep_ans(each['answer'])
+                if ans_proc not in ans_freq_dict:
+                    ans_freq_dict[ans_proc] = 1
+                else:
+                    ans_freq_dict[ans_proc] += 1
+    
+        # My understanding: if an answer does not occur at least ans_freq (default 8) amount of times
+        # then throw out answer. Since there are 10 annotators, should be say majority so 5?
+        ans_freq_filter = ans_freq_dict.copy()
+        for ans in ans_freq_dict:
+            if ans_freq_dict[ans] <= ans_freq:
+                ans_freq_filter.pop(ans)
+    
+        for ans in ans_freq_filter:
+            ix_to_ans[ans_to_ix.__len__()] = ans
+            ans_to_ix[ans] = ans_to_ix.__len__()
+    
+        return ans_to_ix, ix_to_ans
 
-    def ans_stat(self, json_file):
+    def vqa_ans_stat(self, json_file):
         ans_to_ix, ix_to_ans = json.load(open(json_file, 'r'))
 
         return ans_to_ix, ix_to_ans
